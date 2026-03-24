@@ -3,6 +3,16 @@
 
 const MHRAS_API_URL = process.env.MHRAS_API_URL || 'http://localhost:8000';
 
+const getFetch = () => {
+  if (typeof fetch !== 'undefined') return fetch;
+  if (typeof global !== 'undefined' && typeof global.fetch !== 'undefined') return global.fetch;
+  try {
+    return require('node-fetch');
+  } catch (_e) {
+    return null;
+  }
+};
+
 module.exports = async (req, res) => {
   // Only allow POST
   if (req.method !== 'POST') {
@@ -27,7 +37,12 @@ module.exports = async (req, res) => {
 
     // If backend URL is configured, proxy to FastAPI
     if (process.env.MHRAS_API_URL) {
-      const backendResponse = await fetch(`${MHRAS_API_URL}/screen`, {
+      const fetchFn = getFetch();
+      if (!fetchFn) {
+        return res.status(500).json({ error: 'Fetch API unavailable. Ensure Node 18+ runtime or add node-fetch dependency.' });
+      }
+
+      const backendResponse = await fetchFn(`${MHRAS_API_URL}/screen`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
