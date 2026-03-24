@@ -376,3 +376,61 @@ class ErrorResponse(BaseModel):
                 "timestamp": "2025-11-17T10:30:00Z"
             }
         }
+
+
+class BatchScreeningRequest(BaseModel):
+    """Request model for batch screening endpoint"""
+    requests: List[ScreeningRequest] = Field(
+        ...,
+        min_length=1,
+        max_length=100,
+        description="List of screening requests (max 100)"
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "requests": [
+                    {
+                        "anonymized_id": "patient_001",
+                        "survey_data": {"phq9_score": 15, "gad7_score": 10},
+                        "consent_verified": True
+                    },
+                    {
+                        "anonymized_id": "patient_002",
+                        "survey_data": {"phq9_score": 5, "gad7_score": 3},
+                        "consent_verified": True
+                    }
+                ]
+            }
+        }
+
+
+class BatchScreeningResponse(BaseModel):
+    """Response model for batch screening endpoint"""
+    results: List[ScreeningResponse] = Field(
+        ...,
+        description="List of screening responses"
+    )
+    total: int = Field(
+        ...,
+        description="Total number of screening results"
+    )
+    successful: int = Field(
+        ...,
+        description="Number of successful screenings"
+    )
+    failed: int = Field(
+        ...,
+        description="Number of failed screenings"
+    )
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "results": [],
+                "total": 2,
+                "successful": 1,
+                "failed": 1
+            }
+        }

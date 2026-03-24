@@ -14,6 +14,46 @@
         </header>
 
         <main>
+            <!-- Crisis Resources - Always Visible -->
+            <section id="crisis-section" class="card crisis-banner">
+                <h2>🆘 Crisis Resources</h2>
+                <p>If you or someone you know is in crisis, please reach out immediately:</p>
+                <div class="crisis-resources">
+                    <div class="crisis-item">
+                        <strong>988 Suicide & Crisis Lifeline</strong>
+                        <span>Call or Text: 988</span>
+                    </div>
+                    <div class="crisis-item">
+                        <strong>Crisis Text Line</strong>
+                        <span>Text HOME to 741741</span>
+                    </div>
+                    <div class="crisis-item">
+                        <strong>Emergency Services</strong>
+                        <span>Call: 911</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Status -->
+            <section id="status-section" class="card">
+                <h2>System Status</h2>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <span class="status-label">API Status:</span>
+                        <span id="api-status" class="status-value">Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Models:</span>
+                        <span id="models-status" class="status-value">Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Queue:</span>
+                        <span id="queue-status" class="status-value">Checking...</span>
+                    </div>
+                </div>
+                <button onclick="checkSystemStatus()" class="btn btn-secondary">Refresh Status</button>
+            </section>
+
             <!-- Authentication Section -->
             <section id="auth-section" class="card">
                 <h2>Authentication</h2>
@@ -28,7 +68,7 @@
             <!-- Screening Form -->
             <section id="screening-section" class="card">
                 <h2>Patient Screening</h2>
-                
+
                 <div class="form-group">
                     <label for="anonymized-id">Anonymized Patient ID:</label>
                     <input type="text" id="anonymized-id" placeholder="e.g., patient_12345" required>
@@ -91,10 +131,25 @@
                 </button>
             </section>
 
+            <!-- Batch Screening -->
+            <section id="batch-section" class="card">
+                <h2>Batch Screening</h2>
+                <p class="info-text">Submit multiple screening requests at once (max 100).</p>
+
+                <div class="form-group">
+                    <label for="batch-data">Batch Data (JSON array):</label>
+                    <textarea id="batch-data" rows="6" placeholder='[{"anonymized_id": "p1", "survey_data": {"phq9_score": 15}}, {"anonymized_id": "p2", "survey_data": {"phq9_score": 5}}]'></textarea>
+                </div>
+
+                <button onclick="submitBatchScreening()" class="btn btn-secondary">Run Batch Assessment</button>
+
+                <div id="batch-results" class="batch-results" style="display: none;"></div>
+            </section>
+
             <!-- Results Section -->
             <section id="results-section" class="card" style="display: none;">
                 <h2>Assessment Results</h2>
-                
+
                 <!-- Risk Score -->
                 <div id="risk-score-display" class="risk-display">
                     <div class="risk-header">

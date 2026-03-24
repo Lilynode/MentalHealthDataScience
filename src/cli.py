@@ -115,9 +115,14 @@ def activate(model_id):
     """Activate a model"""
     integration = get_integration()
     registry = integration.get_model_registry()
-    
+
     try:
-        registry.set_model_active(model_id, True)
+        # Use register_model's set_active functionality
+        metadata = registry.get_model_metadata(model_id)
+        model_type = metadata['model_type']
+
+        # Reload the model and register again with set_active=True
+        registry._set_active_model(model_type, model_id)
         click.echo(f"✓ Model {model_id} activated")
     except Exception as e:
         click.echo(f"✗ Failed to activate model: {str(e)}", err=True)
@@ -130,10 +135,15 @@ def deactivate(model_id):
     """Deactivate a model"""
     integration = get_integration()
     registry = integration.get_model_registry()
-    
+
     try:
-        registry.set_model_active(model_id, False)
-        click.echo(f"✓ Model {model_id} deactivated")
+        if model_id in registry.index:
+            registry.index[model_id]['is_active'] = False
+            registry._save_index()
+            click.echo(f"✓ Model {model_id} deactivated")
+        else:
+            click.echo(f"✗ Model {model_id} not found", err=True)
+            raise click.Abort()
     except Exception as e:
         click.echo(f"✗ Failed to deactivate model: {str(e)}", err=True)
         raise click.Abort()
@@ -949,6 +959,112 @@ def optimize(config_file, n_trials, n_jobs, output):
     except Exception as e:
         click.echo(f"✗ Optimization setup failed: {str(e)}", err=True)
         raise click.Abort()
+
+
+@cli.command()
+@click.option('--host', default='localhost', help='Database host')
+@click.option('--port', default=5432, help='Database port')
+@click.option('--database', default='mhras', help='Database name')
+@click.option('--user', default='postgres', help='Database user')
+@click.option('--password', prompt=True, hide_input=True, help='Database password')
+@click.option('--skip-consent', is_flag=True, help='Skip seeding consent records')
+@click.option('--skip-resources', is_flag=True, help='Skip seeding resource catalog')
+def init_db(host, port, database, user, password, skip_consent, skip_resources):
+    """Initialize database: run migrations and seed data"""
+    from scripts.init_database import create_database, run_migrations, seed_consent_records, seed_resource_catalog
+
+    click.echo("Initializing MHRAS database...")
+
+    # Create database if needed
+    if not create_database(host, port, database, user, password):
+        click.echo("✗ Database creation failed", err=True)
+        raise click.Abort()
+
+    # Run migrations
+    if not run_migrations(host, port, database, user, password):
+        click.echo("✗ Migrations failed", err=True)
+        raise click.Abort()
+
+    # Seed consent records
+    if not skip_consent:
+        if not seed_consent_records(host, port, database, user, password):
+            click.echo("⚠ Consent seeding failed, continuing...", err=True)
+
+    # Seed resources
+    if not skip_resources:
+        if not seed_resource_catalog(host, port, database, user, password):
+            click.echo("⚠ Resource catalog seeding failed, continuing...", err=True)
+
+    click.echo("✓ Database initialization complete!")
+
+
+@cli.command()
+@click.option('--samples', default=5000, help='Number of training samples')
+@click.option('--model-dir', default='models', help='Model directory')
+@click.option('--registry-dir', default='models/registry', help='Registry directory')
+@click.option('--seed', default=42, help='Random seed')
+def train_models(samples, model_dir, registry_dir, seed):
+    """Train and register ML models"""
+    from scripts.train_models import train_and_register_models
+
+    click.echo(f"Training ML models with {samples} samples...")
+
+    try:
+        results = train_and_register_models(
+            n_samples=samples,
+            model_dir=model_dir,
+            registry_dir=registry_dir,
+            random_state=seed
+        )
+
+        if results:
+            click.echo("\n✓ Model training completed successfully!")
+            for model_type, result in results.items():
+                click.echo(f"  - {model_type}: {result['model_id']}")
+        else:
+            click.echo("✗ Model training failed", err=True)
+            raise click.Abort()
+    except Exception as e:
+        click.echo(f"✗ Model training failed: {str(e)}", err=True)
+        raise click.Abort()
+
+
+@cli.command()
+@click.option('--host', default='localhost', help='Database host')
+@click.option('--port', default=5432, help='Database port')
+@click.option('--database', default='mhras', help='Database name')
+@click.option('--user', default='postgres', help='Database user')
+@click.option('--password', prompt=True, hide_input=True, help='Database password')
+def seed_resources(host, port, database, user, password):
+    """Seed resource catalog with mental health resources"""
+    from scripts.init_database import seed_resource_catalog
+
+    click.echo("Seeding resource catalog...")
+
+    if not seed_resource_catalog(host, port, database, user, password):
+        click.echo("✗ Resource catalog seeding failed", err=True)
+        raise click.Abort()
+
+    click.echo("✓ Resource catalog seeded successfully!")
+
+
+@cli.command()
+@click.option('--host', default='0.0.0.0', help='API host')
+@click.option('--port', default=8000, help='API port')
+@click.option('--reload', is_flag=True, help='Enable auto-reload')
+def serve(host, port, reload):
+    """Start the MHRAS API server"""
+    import uvicorn
+
+    click.echo(f"Starting MHRAS API server on {host}:{port}...")
+
+    uvicorn.run(
+        "src.api.app:app",
+        host=host,
+        port=port,
+        reload=reload,
+        log_level="info"
+    )
 
 
 @cli.command()

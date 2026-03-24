@@ -355,16 +355,195 @@ footer {
     color: var(--danger-color);
 }
 
+/* Crisis Banner */
+.crisis-banner {
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    color: white;
+}
+
+.crisis-banner h2 {
+    color: white;
+}
+
+.crisis-resources {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.crisis-item {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.crisis-item strong {
+    font-size: 1.1rem;
+}
+
+.crisis-item span {
+    opacity: 0.95;
+}
+
+/* System Status Section */
+.status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.status-item {
+    background: var(--bg-color);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.status-label {
+    font-weight: 600;
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.status-value {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.status-healthy {
+    color: var(--success-color);
+}
+
+.status-warning {
+    color: var(--warning-color);
+}
+
+.status-error {
+    color: var(--danger-color);
+}
+
+.status-checking {
+    color: var(--text-light);
+}
+
+/* Batch Section */
+.batch-results {
+    margin-top: 20px;
+}
+
+.batch-summary {
+    background: var(--bg-color);
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.batch-summary h4 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.batch-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.batch-item {
+    background: var(--bg-color);
+    padding: 15px;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary-color);
+}
+
+.batch-item-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.batch-item-header strong {
+    min-width: 100px;
+}
+
+.alert-inline {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-top: 8px;
+    margin-right: 10px;
+}
+
+.alert-inline.danger {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.alert-inline.warning {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+/* Secondary Button */
+.btn-secondary {
+    background-color: var(--text-light);
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5d6d7e;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(127, 140, 141, 0.3);
+}
+
+/* Textarea */
+textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: monospace;
+    resize: vertical;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
 @media (max-width: 768px) {
     .form-row {
         grid-template-columns: 1fr;
     }
-    
+
     header h1 {
         font-size: 2rem;
     }
-    
+
     .risk-score-value {
         font-size: 3rem;
+    }
+
+    .crisis-resources {
+        grid-template-columns: 1fr;
+    }
+
+    .status-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .batch-item-header {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }

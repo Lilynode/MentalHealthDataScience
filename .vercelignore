@@ -1,0 +1,56 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+
+# Git
+.git/
+.gitignore
+
+# Environment
+.env
+.env.*
+*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python project files (Vercel is for frontend + serverless)
+config/
+src/
+scripts/
+examples/
+tests/
+k8s/
+models/
+monitoring/
+docs/
+*.md
+!VERCEL_DEPLOY.md
+
+# ML Models
+*.pkl
+*.joblib
+*.h5
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# Backend specific
+requirements.txt
+Dockerfile
+docker-*.sh
+docker-compose*.yml
+*.py

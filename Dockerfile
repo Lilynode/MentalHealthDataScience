@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     g++ \
     make \
     libpq-dev \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file
@@ -41,6 +42,8 @@ ENV PATH=/root/.local/bin:$PATH
 COPY src/ ./src/
 COPY config/ ./config/
 COPY examples/ ./examples/
+COPY scripts/ ./scripts/
+COPY frontend/ ./frontend/
 
 # Create directories for models, data, experiments, and datasets
 RUN mkdir -p /app/models /app/data /app/logs /app/experiments/artifacts /app/data/versions
@@ -55,6 +58,10 @@ RUN useradd -m -u 1000 appuser && \
     chown -R appuser:appuser /app && \
     chmod -R 755 /app/experiments /app/data
 
+# Copy entrypoint script
+COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
 # Switch to non-root user
 USER appuser
 
@@ -64,6 +71,9 @@ EXPOSE 8000
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
+
+# Use entrypoint script for initialization
+ENTRYPOINT ["/docker-entrypoint.sh"]
 
 # Default command - run the FastAPI application
 CMD ["uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8000"]
