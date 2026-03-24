@@ -82,3 +82,4 @@ See `VERCEL_DEPLOY.md` for detailed deployment instructions.
 ## License
 
 Proprietary - For authorized clinical use only.
+# MentalHealthDataScience
