@@ -23,15 +23,16 @@ __pycache__/
 Thumbs.db
 
 # Python project files (Vercel is for frontend + serverless)
-config/
-src/
-scripts/
-examples/
-tests/
-k8s/
-models/
-monitoring/
-docs/
+# Keep source for FastAPI entrypoint and dependencies
+# config/
+# src/
+# scripts/
+# examples/
+# tests/
+# k8s/
+# models/
+# monitoring/
+# docs/
 *.md
 !VERCEL_DEPLOY.md
 
@@ -53,4 +54,5 @@ requirements.txt
 Dockerfile
 docker-*.sh
 docker-compose*.yml
-*.py
+# *.py
+
