@@ -9,6 +9,10 @@ module.exports = async (req, res) => {
   }
 
   try {
+    if (!req.body || typeof req.body !== 'object') {
+      return res.status(400).json({ error: 'Request body must be JSON' });
+    }
+
     const { requests } = req.body;
 
     if (!requests || !Array.isArray(requests)) {

@@ -12,6 +12,10 @@ module.exports = async (req, res) => {
   try {
     const requestBody = req.body;
 
+    if (!requestBody || typeof requestBody !== 'object') {
+      return res.status(400).json({ error: 'Request body must be JSON' });
+    }
+
     // Validate required fields
     if (!requestBody.anonymized_id) {
       return res.status(400).json({ error: 'anonymized_id is required' });
