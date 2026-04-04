@@ -16,7 +16,8 @@ from src.exceptions import (
     InferenceError,
     InterpretabilityError,
     ModelNotFoundError,
-    EnsembleError
+    EnsembleError,
+    RequestTimeoutError
 )
 
 logger = logging.getLogger(__name__)
@@ -230,7 +231,7 @@ class ErrorHandlingMiddleware(BaseHTTPMiddleware):
                 request=request
             )
         
-        except TimeoutError as e:
+        except RequestTimeoutError as e:
             # 504 Gateway Timeout
             return self._create_error_response(
                 status_code=504,
@@ -356,7 +357,7 @@ class TimeoutMiddleware(BaseHTTPMiddleware):
                 f"(limit: {self.timeout_seconds}s)"
             )
             
-            raise TimeoutError(
+            raise RequestTimeoutError(
                 f"Request exceeded timeout of {self.timeout_seconds}s"
             )
 

@@ -1,25 +1,22 @@
 {
   "version": 2,
-  "buildCommand": "echo 'No build required'",
+  "buildCommand": "npm install",
   "outputDirectory": ".",
   "rewrites": [
     { "source": "/api/screen", "destination": "/api/screen" },
     { "source": "/api/batch-screen", "destination": "/api/batch-screen" },
-    { "source": "/api/health", "destination": "/api/health" }
+    { "source": "/api/health", "destination": "/api/health" },
+    { "source": "/", "destination": "/api/index" }
   ],
   "regions": ["iad1"],
   "functions": {
-    "api/screen.js": {
+    "api/*.js": {
       "memory": 1024,
       "maxDuration": 30
     },
     "api/batch-screen.js": {
-      "memory": 1024,
+      "memory": 2048,
       "maxDuration": 60
-    },
-    "api/health.js": {
-      "memory": 256,
-      "maxDuration": 10
     }
   },
   "headers": [
@@ -31,5 +28,8 @@
         { "key": "X-XSS-Protection", "value": "1; mode=block" }
       ]
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }

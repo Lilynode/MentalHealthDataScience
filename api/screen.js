@@ -20,7 +20,13 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const requestBody = req.body;
+    // Parse body safely - Vercel handles JSON parsing, but handle edge cases
+    let requestBody;
+    try {
+      requestBody = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+    } catch (parseError) {
+      return res.status(400).json({ error: 'Invalid JSON in request body' });
+    }
 
     if (!requestBody || typeof requestBody !== 'object') {
       return res.status(400).json({ error: 'Request body must be JSON' });

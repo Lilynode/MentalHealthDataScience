@@ -40,7 +40,7 @@ class ModelError(MHRASException):
     pass
 
 
-class TimeoutError(MHRASException):
+class RequestTimeoutError(MHRASException):
     """Raised when operations exceed time limits"""
     pass
 

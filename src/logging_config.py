@@ -1,6 +1,7 @@
 """Logging infrastructure with structlog for JSON-formatted logs"""
 
 import sys
+import os
 import logging
 from typing import Any
 import structlog
@@ -18,14 +19,24 @@ def add_app_context(logger: Any, method_name: str, event_dict: EventDict) -> Eve
 
 def setup_logging() -> None:
     """Configure structlog for JSON-formatted logging"""
-    
+
     # Determine log level
     log_level = getattr(logging, settings.logging.level.upper(), logging.INFO)
-    
+
+    # Force stdout in serverless environments (Vercel, AWS Lambda, etc.)
+    is_serverless = any([
+        'VERCEL' in os.environ,
+        'AWS_LAMBDA_FUNCTION_NAME' in os.environ,
+        'CLOUD_RUN_JOB' in os.environ,
+    ])
+    output_stream = sys.stdout if is_serverless else (
+        sys.stdout if settings.logging.output == "stdout" else open(settings.logging.output, "a")
+    )
+
     # Configure standard library logging
     logging.basicConfig(
         format="%(message)s",
-        stream=sys.stdout if settings.logging.output == "stdout" else open(settings.logging.output, "a"),
+        stream=output_stream,
         level=log_level,
     )
     
